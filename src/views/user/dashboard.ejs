@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ClimateNow — Dashboard do usuário. Veja clima e notícias do dia.">
+  <title><%= title %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="app-body">
+
+  <!-- Navbar -->
+  <nav class="navbar" id="main-navbar">
+    <div class="nav-brand">
+      <div class="nav-logo-icon">
+        <svg viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="13" r="7" fill="url(#nSun)"/>
+          <path d="M5 23c0-4.418 4.925-8 11-8s11 3.582 11 8" stroke="url(#nCloud)" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <defs>
+            <linearGradient id="nSun" x1="9" y1="6" x2="23" y2="20"><stop stop-color="#F59E0B"/><stop offset="1" stop-color="#F97316"/></linearGradient>
+            <linearGradient id="nCloud" x1="5" y1="15" x2="27" y2="23"><stop stop-color="#60A5FA"/><stop offset="1" stop-color="#818CF8"/></linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <span class="nav-brand-name">ClimateNow</span>
+    </div>
+    <div class="nav-center">
+      <form class="search-form" method="GET" action="/user/dashboard" id="search-form">
+        <input
+          type="text"
+          name="search"
+          id="search-input"
+          class="search-input"
+          placeholder="Buscar notícias..."
+          value="<%= searchTerm %>"
+          autocomplete="off"
+        >
+        <button type="submit" class="search-btn" id="search-submit-btn">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+        </button>
+      </form>
+    </div>
+    <div class="nav-right">
+      <div class="nav-user">
+        <div class="nav-avatar">
+          <%= user.username.charAt(0).toUpperCase() %>
+        </div>
+        <span class="nav-username"><%= user.username %></span>
+      </div>
+      <a href="/logout" class="btn-logout" id="logout-btn">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/></svg>
+        Sair
+      </a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="dashboard-grid">
+
+      <!-- Coluna Esquerda: Clima -->
+      <aside class="sidebar">
+        <div class="weather-card" id="weather-widget">
+          <div class="weather-header">
+            <h2 class="weather-city">
+              <svg viewBox="0 0 20 20" fill="currentColor" class="city-icon"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+              <%= weather ? weather.city : city %>
+            </h2>
+            <form method="GET" action="/user/dashboard" id="city-form">
+              <input type="hidden" name="search" value="<%= searchTerm %>">
+              <div class="city-input-wrapper">
+                <input type="text" name="city" id="city-input" class="city-input" placeholder="Trocar cidade..." value="">
+                <button type="submit" id="city-search-btn" class="city-search-btn">→</button>
+              </div>
+            </form>
+          </div>
+
+          <% if (weather) { %>
+            <div class="weather-main">
+              <img
+                src="https://openweathermap.org/img/wn/<%= weather.icon %>@2x.png"
+                alt="<%= weather.description %>"
+                class="weather-icon-img"
+                id="weather-icon"
+                onerror="this.style.display='none'"
+              >
+              <div class="weather-temp">
+                <span class="temp-value"><%= weather.temp %></span>
+                <span class="temp-unit">°C</span>
+              </div>
+            </div>
+            <p class="weather-desc"><%= weather.description %></p>
+            <div class="weather-details">
+              <div class="weather-detail-item">
+                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+                <span>Sensação: <strong><%= weather.feels_like %>°C</strong></span>
+              </div>
+              <div class="weather-detail-item">
+                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clip-rule="evenodd"/></svg>
+                <span>Umidade: <strong><%= weather.humidity %>%</strong></span>
+              </div>
+              <div class="weather-detail-item">
+                <svg viewBox="0 0 20 20" fill="currentColor"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+                <span>Vento: <strong><%= weather.wind %> m/s</strong></span>
+              </div>
+            </div>
+          <% } else { %>
+            <div class="weather-unavailable">
+              <p>Dados climáticos indisponíveis</p>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Mini stats -->
+        <div class="sidebar-card" id="user-info-card">
+          <h3 class="sidebar-card-title">Seu Perfil</h3>
+          <div class="profile-info">
+            <div class="profile-avatar-large"><%= user.username.charAt(0).toUpperCase() %></div>
+            <p class="profile-name"><%= user.username %></p>
+            <p class="profile-email"><%= user.email %></p>
+            <span class="role-badge user">Usuário</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Coluna Direita: Notícias -->
+      <section class="news-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <% if (searchTerm) { %>
+              Resultados para "<span class="search-highlight"><%= searchTerm %></span>"
+            <% } else { %>
+              Últimas Notícias & Avisos
+            <% } %>
+          </h2>
+          <% if (searchTerm) { %>
+            <a href="/user/dashboard" class="clear-search" id="clear-search-btn">✕ Limpar busca</a>
+          <% } %>
+        </div>
+
+        <% if (typeof dbError !== 'undefined' && dbError) { %>
+          <div class="alert alert-error">
+            <strong>Erro de banco:</strong> <%= dbError %>
+          </div>
+        <% } %>
+
+        <% if (posts.length === 0) { %>
+          <div class="empty-state" id="empty-posts">
+            <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="30" stroke="#334155" stroke-width="2"/><path d="M22 32h20M22 24h20M22 40h12" stroke="#64748b" stroke-width="2" stroke-linecap="round"/></svg>
+            <p>Nenhuma notícia encontrada.</p>
+          </div>
+        <% } else { %>
+          <div class="posts-grid" id="posts-container">
+            <% posts.forEach((post, index) => { %>
+              <article class="post-card post-<%= post.category %>" id="post-<%= post.id %>" style="animation-delay: <%= index * 0.05 %>s">
+                <div class="post-header">
+                  <span class="category-badge <%= post.category %>">
+                    <% if (post.category === 'news') { %> 📰 Notícia
+                    <% } else if (post.category === 'alert') { %> 🚨 Alerta
+                    <% } else { %> ⚠️ Aviso
+                    <% } %>
+                  </span>
+                  <span class="post-date">
+                    <%= new Date(post.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }) %>
+                  </span>
+                </div>
+                <h3 class="post-title"><%= post.title %></h3>
+                <p class="post-content"><%= post.content %></p>
+                <div class="post-footer">
+                  <span class="post-author">Por <%= post.author_name || 'Redação' %></span>
+                </div>
+              </article>
+            <% }) %>
+          </div>
+        <% } %>
+      </section>
+    </div>
+  </main>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

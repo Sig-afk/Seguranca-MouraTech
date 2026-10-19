@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ClimateNow — Criar novo post ou aviso.">
+  <title><%= title %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="app-body admin-body">
+
+  <!-- Navbar -->
+  <nav class="navbar admin-navbar" id="create-post-navbar">
+    <div class="nav-brand">
+      <a href="/admin/dashboard" class="back-link" id="back-to-dashboard">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>
+      </a>
+      <div class="nav-logo-icon">
+        <svg viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="13" r="7" fill="url(#cpSun)"/>
+          <path d="M5 23c0-4.418 4.925-8 11-8s11 3.582 11 8" stroke="url(#cpCloud)" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <defs>
+            <linearGradient id="cpSun" x1="9" y1="6" x2="23" y2="20"><stop stop-color="#F59E0B"/><stop offset="1" stop-color="#F97316"/></linearGradient>
+            <linearGradient id="cpCloud" x1="5" y1="15" x2="27" y2="23"><stop stop-color="#60A5FA"/><stop offset="1" stop-color="#818CF8"/></linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <span class="nav-brand-name">Novo Post</span>
+    </div>
+    <div class="nav-right">
+      <div class="nav-user">
+        <div class="nav-avatar admin-avatar"><%= user.username.charAt(0).toUpperCase() %></div>
+        <span class="nav-username"><%= user.username %></span>
+      </div>
+      <a href="/logout" class="btn-logout" id="create-logout-btn">Sair</a>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="create-post-container">
+      <div class="create-post-card" id="create-post-card">
+        <h1 class="create-post-title">✍️ Criar Novo Post</h1>
+        <p class="create-post-subtitle">Publique uma notícia, alerta ou aviso para os usuários.</p>
+
+        <form method="POST" action="/admin/create-post" id="create-post-form" class="create-post-form">
+          <div class="form-group">
+            <label for="post-title" class="form-label">Título *</label>
+            <input
+              type="text"
+              id="post-title"
+              name="title"
+              class="form-input"
+              placeholder="Ex: Alerta de Tempestade no Sul do País"
+              required
+              maxlength="200"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="post-category" class="form-label">Categoria *</label>
+            <div class="select-wrapper">
+              <select id="post-category" name="category" class="form-input form-select" required>
+                <option value="news">📰 Notícia</option>
+                <option value="alert">🚨 Alerta</option>
+                <option value="warning">⚠️ Aviso</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="post-content" class="form-label">Conteúdo *</label>
+            <textarea
+              id="post-content"
+              name="content"
+              class="form-input form-textarea"
+              placeholder="Escreva o conteúdo completo aqui..."
+              required
+              rows="8"
+              maxlength="5000"
+            ></textarea>
+            <span class="char-counter" id="char-counter">0 / 5000</span>
+          </div>
+
+          <div class="form-actions">
+            <a href="/admin/dashboard" class="btn-cancel" id="cancel-create-btn">Cancelar</a>
+            <button type="submit" class="btn-publish" id="publish-btn">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd"/></svg>
+              Publicar Post
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/main.js"></script>
+  <script>
+    const textarea = document.getElementById('post-content');
+    const counter = document.getElementById('char-counter');
+    if (textarea && counter) {
+      textarea.addEventListener('input', () => {
+        counter.textContent = `${textarea.value.length} / 5000`;
+      });
+    }
+  </script>
+</body>
+</html>

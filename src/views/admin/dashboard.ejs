@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ClimateNow — Painel de administração. Gerencie notícias e avisos.">
+  <title><%= title %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="app-body admin-body">
+
+  <!-- Navbar -->
+  <nav class="navbar admin-navbar" id="admin-navbar">
+    <div class="nav-brand">
+      <div class="nav-logo-icon">
+        <svg viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="13" r="7" fill="url(#aSun)"/>
+          <path d="M5 23c0-4.418 4.925-8 11-8s11 3.582 11 8" stroke="url(#aCloud)" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <defs>
+            <linearGradient id="aSun" x1="9" y1="6" x2="23" y2="20"><stop stop-color="#F59E0B"/><stop offset="1" stop-color="#F97316"/></linearGradient>
+            <linearGradient id="aCloud" x1="5" y1="15" x2="27" y2="23"><stop stop-color="#60A5FA"/><stop offset="1" stop-color="#818CF8"/></linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <span class="nav-brand-name">ClimateNow <span class="admin-tag">Admin</span></span>
+    </div>
+    <div class="nav-right">
+      <a href="/admin/create-post" class="btn-new-post" id="new-post-btn">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+        Novo Post
+      </a>
+      <div class="nav-user">
+        <div class="nav-avatar admin-avatar"><%= user.username.charAt(0).toUpperCase() %></div>
+        <span class="nav-username"><%= user.username %></span>
+      </div>
+      <a href="/logout" class="btn-logout" id="admin-logout-btn">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/></svg>
+        Sair
+      </a>
+    </div>
+  </nav>
+
+  <main class="main-content admin-main">
+
+    <!-- Alertas de feedback -->
+    <% if (success) { %>
+      <div class="alert alert-success admin-alert" id="success-alert"><%= success %></div>
+    <% } %>
+    <% if (error) { %>
+      <div class="alert alert-error admin-alert" id="error-alert">
+        <strong>Erro:</strong> <%= error %>
+      </div>
+    <% } %>
+
+    <!-- Stats Cards -->
+    <div class="stats-row" id="stats-row">
+      <div class="stat-card" id="stat-posts">
+        <div class="stat-icon posts-icon">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value"><%= stats.posts %></span>
+          <span class="stat-label">Posts Publicados</span>
+        </div>
+      </div>
+      <div class="stat-card" id="stat-users">
+        <div class="stat-icon users-icon">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value"><%= stats.users %></span>
+          <span class="stat-label">Usuários Cadastrados</span>
+        </div>
+      </div>
+      <div class="stat-card" id="stat-status">
+        <div class="stat-icon status-icon">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value stat-online">Online</span>
+          <span class="stat-label">Status do Sistema</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-grid">
+      <!-- Posts -->
+      <section class="admin-posts-section">
+        <div class="section-header">
+          <h2 class="section-title">Gerenciar Posts</h2>
+        </div>
+
+        <div class="posts-table-wrapper" id="posts-table-wrapper">
+          <% if (posts.length === 0) { %>
+            <div class="empty-state"><p>Nenhum post encontrado.</p></div>
+          <% } else { %>
+            <table class="posts-table" id="posts-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Título</th>
+                  <th>Categoria</th>
+                  <th>Autor</th>
+                  <th>Data</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% posts.forEach(post => { %>
+                  <tr class="post-row" id="row-<%= post.id %>">
+                    <td class="post-id">#<%= post.id %></td>
+                    <td class="post-title-cell"><%= post.title %></td>
+                    <td>
+                      <span class="category-badge <%= post.category %>">
+                        <% if (post.category === 'news') { %>📰 Notícia<% } %>
+                        <% if (post.category === 'alert') { %>🚨 Alerta<% } %>
+                        <% if (post.category === 'warning') { %>⚠️ Aviso<% } %>
+                      </span>
+                    </td>
+                    <td><%= post.author_name || 'N/A' %></td>
+                    <td class="post-date"><%= new Date(post.created_at).toLocaleDateString('pt-BR') %></td>
+                    <td>
+                      <form method="POST" action="/admin/delete-post/<%= post.id %>" class="delete-form" id="delete-form-<%= post.id %>">
+                        <button type="submit" class="btn-delete" id="delete-btn-<%= post.id %>" onclick="return confirm('Tem certeza que deseja excluir este post?')">
+                          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                          Excluir
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          <% } %>
+        </div>
+      </section>
+
+      <!-- Busca de usuário (VULNERÁVEL) -->
+      <aside class="admin-sidebar">
+        <div class="admin-sidebar-card" id="user-search-card">
+          <h3 class="sidebar-card-title">
+            🔍 Busca de Usuário
+            <span class="vuln-badge" title="Esta funcionalidade contém uma vulnerabilidade intencional de SQL Injection">⚠️ Vuln #3</span>
+          </h3>
+          <form method="GET" action="/admin/search-user" id="user-search-form">
+            <div class="form-group">
+              <input
+                type="text"
+                name="searchUser"
+                id="admin-search-user"
+                class="form-input"
+                placeholder="Nome de usuário exato..."
+                value="<%= searchTerm || '' %>"
+              >
+            </div>
+            <button type="submit" class="btn-search" id="search-user-btn">Buscar</button>
+          </form>
+
+          <% if (searchResult !== null) { %>
+            <div class="search-results" id="search-results">
+              <% if (searchResult.length === 0) { %>
+                <p class="no-results">Nenhum usuário encontrado.</p>
+              <% } else { %>
+                <% searchResult.forEach(u => { %>
+                  <div class="user-result-card" id="user-result-<%= u.id %>">
+                    <div class="user-result-avatar"><%= u.username.charAt(0).toUpperCase() %></div>
+                    <div class="user-result-info">
+                      <strong><%= u.username %></strong>
+                      <span><%= u.email %></span>
+                      <span class="role-badge <%= u.role %>"><%= u.role %></span>
+                    </div>
+                  </div>
+                <% }) %>
+              <% } %>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Card de ações rápidas -->
+        <div class="admin-sidebar-card" id="quick-actions-card">
+          <h3 class="sidebar-card-title">Ações Rápidas</h3>
+          <div class="quick-actions">
+            <a href="/admin/create-post" class="quick-action-btn" id="quick-news-btn">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+              Nova Notícia
+            </a>
+            <a href="/admin/create-post" class="quick-action-btn quick-alert" id="quick-alert-btn">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+              Novo Aviso
+            </a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script src="/js/main.js"></script>
+  <script>
+    // Auto-remove alerts
+    setTimeout(() => {
+      const alerts = document.querySelectorAll('.admin-alert');
+      alerts.forEach(a => a.style.opacity = '0');
+    }, 4000);
+  </script>
+</body>
+</html>
